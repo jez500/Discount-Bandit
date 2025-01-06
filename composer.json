@@ -10,6 +10,7 @@
         "ext-dom": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
+        "ext-sockets": "*",
         "archilex/filament-toggle-icon-column": "^3.1",
         "awcodes/filament-quick-create": "^3.4",
         "chrome-php/chrome": "^1.11",
