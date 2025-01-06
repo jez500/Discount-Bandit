@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
-use App\Notifications\GroupDiscount;
-use App\Notifications\ProductDiscount;
 use App\Notifications\ProductDiscounted;
 use Illuminate\Console\Command;
 
@@ -31,15 +29,15 @@ class DiscountTestNotificationCommand extends Command
     {
         User::first()->notify(new ProductDiscounted(
             product_id: 123,
-            product_name: "This is a test product",
-            store_name: "this is a test store",
+            product_name: 'This is a test product',
+            store_name: 'this is a test store',
             price: 100,
             highest_price: 120,
             lowest_price: 80,
-            product_url: "https://cybrarist.com",
-            image: "https://raw.githubusercontent.com/Cybrarist/Discount-Bandit/refs/heads/master/storage/app/public/bandit.png",
-            currency: "$",
-            tags: ",New Test Tags",
+            product_url: 'https://cybrarist.com',
+            image: 'https://raw.githubusercontent.com/Cybrarist/Discount-Bandit/refs/heads/master/storage/app/public/bandit.png',
+            currency: '$',
+            tags: ',New Test Tags',
         ));
     }
 }

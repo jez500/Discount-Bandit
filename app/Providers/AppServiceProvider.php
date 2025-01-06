@@ -29,18 +29,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-//        URL::forceScheme('https');
+        //        URL::forceScheme('https');
 
-//        if (config('settings.disable_auth') && ! app()->runningInConsole())
-//            Auth::login(User::first());
-
+        //        if (config('settings.disable_auth') && ! app()->runningInConsole())
+        //            Auth::login(User::first());
 
         Table::configureUsing(function (Table $table): void {
             $table->filtersLayout(FiltersLayout::AboveContentCollapsible)
-                ->paginationPageOptions([ 25, 50 , 100 , 150 ,200,'all'])
+                ->paginationPageOptions([25, 50, 100, 150, 200, 'all'])
                 ->deferLoading();
         });
-
 
         Health::checks([
             CacheCheck::new(),

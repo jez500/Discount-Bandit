@@ -20,7 +20,7 @@ return new class extends Migration
             $table->char('status', 1)->default(\App\Enums\StatusEnum::Published->value);
 
             $table->boolean('favourite')->default(false);
-            $table->boolean("stock")->default(false);
+            $table->boolean('stock')->default(false);
             $table->date('snoozed_until')->nullable();
             $table->unsignedTinyInteger('max_notifications')->nullable();
             $table->unsignedSmallInteger('lowest_within')->nullable();

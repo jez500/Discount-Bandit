@@ -56,7 +56,6 @@ return [
             'throw' => false,
         ],
 
-
         'store' => [
             'driver' => 'local',
             'root' => storage_path('app/public/store/'),
@@ -64,7 +63,6 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
-
 
     ],
 

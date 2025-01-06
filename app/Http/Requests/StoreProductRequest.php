@@ -23,15 +23,15 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "url"=>["required","url"],
-            "name"=>["nullable", "string"],
-            "image"=>["nullable"],
-            "notify_price"=>["numeric" , "nullable"],
-            "official_seller"=>["boolean", "nullable"],
-            "favourite"=>["boolean", "nullable" ],
-            "stock_available"=>["boolean" , "nullable"],
-            "lowest_within"=>["numeric" , "integer", "nullable" ],
-            "number_of_rates"=>["numeric" , "integer", "nullable" ],
+            'url' => ['required', 'url'],
+            'name' => ['nullable', 'string'],
+            'image' => ['nullable'],
+            'notify_price' => ['numeric', 'nullable'],
+            'official_seller' => ['boolean', 'nullable'],
+            'favourite' => ['boolean', 'nullable'],
+            'stock_available' => ['boolean', 'nullable'],
+            'lowest_within' => ['numeric', 'integer', 'nullable'],
+            'number_of_rates' => ['numeric', 'integer', 'nullable'],
         ];
     }
 }

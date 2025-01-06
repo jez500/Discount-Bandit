@@ -16,9 +16,6 @@ class CrawlProductJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
-
-
     public $tries = 1;
 
     /**
@@ -35,14 +32,15 @@ class CrawlProductJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            $current_product_store=ProductStore::with("store")->find($this->product_store_id);
-            $final_class_name="App\Helpers\StoresAvailable\\" . Str::ucfirst( explode(".",$current_product_store->store->domain)[0]);
+            $current_product_store = ProductStore::with('store')->find($this->product_store_id);
+            $final_class_name = "App\Helpers\StoresAvailable\\".Str::ucfirst(explode('.', $current_product_store->store->domain)[0]);
             new $final_class_name($current_product_store->id);
-        }catch (\Exception | \Error $e){
-            Log::error("Job Stopped And Failed");
+        } catch (\Exception|\Error $e) {
+            Log::error('Job Stopped And Failed');
         }
 
     }
+
     public function failed(?Throwable $exception): void
     {
         Log::error($exception);

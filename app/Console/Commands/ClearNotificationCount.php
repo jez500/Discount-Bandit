@@ -28,7 +28,7 @@ class ClearNotificationCount extends Command
     {
         DB::table('product_store')
             ->update([
-                'notifications_sent' => 0
+                'notifications_sent' => 0,
             ]);
     }
 }

@@ -11,9 +11,9 @@ return new class extends Migration
     public function up()
     {
 
-        if (!Schema::hasTable('health_check_results')) {
+        if (! Schema::hasTable('health_check_results')) {
 
-            $connection = (new HealthCheckResultHistoryItem())->getConnectionName();
+            $connection = (new HealthCheckResultHistoryItem)->getConnectionName();
             $tableName = EloquentHealthResultStore::getHistoryItemInstance()->getTable();
 
             Schema::connection($connection)->create($tableName, function (Blueprint $table) {
@@ -31,7 +31,7 @@ return new class extends Migration
                 $table->timestamps();
             });
 
-            Schema::connection($connection)->table($tableName, function(Blueprint $table) {
+            Schema::connection($connection)->table($tableName, function (Blueprint $table) {
                 $table->index('created_at');
                 $table->index('batch');
             });

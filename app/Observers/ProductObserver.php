@@ -36,5 +36,4 @@ class ProductObserver
 
         StoreHelper::clear_caches_related_to_stores();
     }
-
 }

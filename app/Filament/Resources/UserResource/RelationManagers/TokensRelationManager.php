@@ -10,7 +10,6 @@ class TokensRelationManager extends RelationManager
 {
     protected static string $relationship = 'tokens';
 
-
     public function table(Table $table): Table
     {
         return $table

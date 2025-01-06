@@ -11,9 +11,9 @@ use Illuminate\Notifications\Notifiable;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements  FilamentUser
+class User extends Authenticatable implements FilamentUser
 {
-    use HasFactory, Notifiable , TwoFactorAuthenticatable, HasApiTokens;
+    use HasApiTokens, HasFactory , Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +25,6 @@ class User extends Authenticatable implements  FilamentUser
         'email',
         'password',
     ];
-
 
     /**
      * The attributes that should be hidden for serialization.
@@ -50,7 +49,8 @@ class User extends Authenticatable implements  FilamentUser
         ];
     }
 
-
-    public function canAccessPanel(Panel $panel): bool { return true;}
-
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
 }

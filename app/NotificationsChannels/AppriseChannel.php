@@ -1,12 +1,12 @@
 <?php
 
 namespace App\NotificationsChannels;
+
 use Illuminate\Notifications\Notification;
 
 class AppriseChannel
 {
-
-    protected  $apprise;
+    protected $apprise;
 
     public function __construct(Apprise $apprise)
     {
@@ -20,6 +20,6 @@ class AppriseChannel
     {
         $message = $notification->toApprise($notifiable);
 
-       return $this->apprise->send(notification_content: $message["content"]);
+        return $this->apprise->send(notification_content: $message['content']);
     }
 }

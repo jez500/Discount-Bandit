@@ -10,11 +10,10 @@ class ListGroups extends ListRecords
 {
     protected static string $resource = GroupResource::class;
 
-    protected function getHeaderActions(): array {
+    protected function getHeaderActions(): array
+    {
         return [
             Actions\CreateAction::make(),
         ];
     }
-
-
 }

@@ -13,7 +13,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
@@ -24,11 +23,10 @@ class StoreResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?int $navigationSort=4;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
-
 
         return $form
             ->schema([
@@ -43,14 +41,13 @@ class StoreResource extends Resource
                 Forms\Components\Section::make('settings')
                     ->columns(4)
                     ->schema([
-                         Forms\Components\Toggle::make('tabs')
+                        Forms\Components\Toggle::make('tabs')
                             ->inline(false)
                             ->label('Display As Tab on Products'),
                     ]),
 
             ]);
     }
-
 
     public static function table(Table $table): Table
     {
@@ -62,7 +59,7 @@ class StoreResource extends Resource
                     ->badge()
                     ->color(fn ($state): string => StatusEnum::get_badge($state)),
                 ToggleColumn::make('tabs'),
-                TextColumn::make("products_count")->counts('products')->label("Total Products")
+                TextColumn::make('products_count')->counts('products')->label('Total Products'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -90,5 +87,4 @@ class StoreResource extends Resource
             'edit' => Pages\EditStore::route('/{record}/edit'),
         ];
     }
-
 }
