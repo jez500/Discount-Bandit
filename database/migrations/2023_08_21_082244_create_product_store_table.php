@@ -18,10 +18,10 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Store::class)->constrained()->cascadeOnDelete();
             $table->string('ebay_id')->unique()->nullable();
 
-            //data
+            // data
             $table->unsignedInteger('price')->nullable();
             $table->unsignedInteger('notify_price')->nullable();
-            $table->string('rate')->default("0");
+            $table->string('rate')->default('0');
             $table->unsignedInteger('number_of_rates')->default(0);
             $table->string('seller')->nullable();
             $table->text('offers')->nullable();
@@ -29,14 +29,13 @@ return new class extends Migration
             $table->string('condition', 50)->default('new');
             $table->unsignedTinyInteger('notifications_sent')->default(0);
 
-            //extra settings
+            // extra settings
             $table->boolean('lowest_30')->default(false);
             $table->boolean('add_shipping')->default(false);
             $table->boolean('in_stock')->default(true);
 
-            //ebay conditions
+            // ebay conditions
             $table->boolean('remove_if_sold')->default(false);
-
 
         });
     }

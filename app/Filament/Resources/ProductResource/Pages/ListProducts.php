@@ -11,35 +11,34 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ListProducts extends ListRecords
 {
-
     protected static string $resource = ProductResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            Actions\CreateAction::make(),
         ];
     }
 
-    public function getTabs() : array {
+    public function getTabs(): array
+    {
 
-        $stores=StoreHelper::get_stores_active_for_tabs();
+        $stores = StoreHelper::get_stores_active_for_tabs();
 
-        if (sizeof($stores)){
+        if (count($stores)) {
             $tabs['all'] = Tab::make();
-            foreach ($stores as $store)
-                $tabs[$store->name]=Tab::make()->modifyQueryUsing(function (Builder $query) use ($store) {
+            foreach ($stores as $store) {
+                $tabs[$store->name] = Tab::make()->modifyQueryUsing(function (Builder $query) use ($store) {
                     $query->whereHas('stores', function ($query) use ($store) {
-                        $query->where('stores.id',$store->id);
+                        $query->where('stores.id', $store->id);
                     });
                 });
+            }
 
             return $tabs;
         }
 
-
-        return  [];
-
+        return [];
 
     }
 }

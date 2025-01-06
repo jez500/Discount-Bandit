@@ -14,41 +14,39 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable=[
-        "name",
-        "image",
-        "status",
-        "favourite",
-        "stock",
-        "snoozed_until",
-        "max_notifications",
-        "lowest_within",
-        "only_official",
-        "walmart_ip",
-        "argos_id",
-    ];
-    protected $casts=[
-        'status'=>StatusEnum::class,
-//        'stores.pivot.price'=>Money::class,
-//        'stores.pivot.price'=>Money::class,
-//        'stores.pivot.price'=>Money::class,
-//        'stores.pivot.notify_price'=>Money::class,
-//        'stores.pivot.shipping_price'=>Money::class,
-//        'stores.pivot.updated_at'=>'datetime',
+    protected $fillable = [
+        'name',
+        'image',
+        'status',
+        'favourite',
+        'stock',
+        'snoozed_until',
+        'max_notifications',
+        'lowest_within',
+        'only_official',
+        'walmart_ip',
+        'argos_id',
     ];
 
-
+    protected $casts = [
+        'status' => StatusEnum::class,
+        //        'stores.pivot.price'=>Money::class,
+        //        'stores.pivot.price'=>Money::class,
+        //        'stores.pivot.price'=>Money::class,
+        //        'stores.pivot.notify_price'=>Money::class,
+        //        'stores.pivot.shipping_price'=>Money::class,
+        //        'stores.pivot.updated_at'=>'datetime',
+    ];
 
     public function categories()
     {
         return $this->belongsToMany(Category::class)->withTimestamps();
     }
 
-
     public function stores()
     {
         return $this->belongsToMany(Store::class)->withTimestamps()->withPivot([
-            "id",
+            'id',
             'price',
             'highest_price',
             'lowest_price',

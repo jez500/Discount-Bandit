@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rss_feed_items', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->text("data");
+            $table->text('data');
         });
     }
 

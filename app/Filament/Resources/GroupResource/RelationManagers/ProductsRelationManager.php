@@ -3,17 +3,12 @@
 namespace App\Filament\Resources\GroupResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductsRelationManager extends RelationManager
 {
@@ -47,8 +42,8 @@ class ProductsRelationManager extends RelationManager
                         $action->getRecordSelect(),
                         Forms\Components\TextInput::make('key'),
                     ])
-                    ->label("Add Product")
-                    ->preloadRecordSelect()
+                    ->label('Add Product')
+                    ->preloadRecordSelect(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-             $table->string('walmart_ip')->after('asin')->unique()->nullable();
+            $table->string('walmart_ip')->after('asin')->unique()->nullable();
         });
     }
 

@@ -30,13 +30,12 @@ class DiscountFillSupervisorWorkersCommand extends Command
     public function handle()
     {
 
-        File::copy(base_path('docker/base_supervisord.conf') , '/etc/supervisor/conf.d/supervisord.conf');
+        File::copy(base_path('docker/base_supervisord.conf'), '/etc/supervisor/conf.d/supervisord.conf');
 
-
-        Store::where("status" , StatusEnum::Published)->get()
+        Store::where('status', StatusEnum::Published)->get()
             ->each(function ($store) {
 
-                Log::info($store->name . " appended");
+                Log::info($store->name.' appended');
 
                 File::append('/etc/supervisor/conf.d/supervisord.conf',
                     "

@@ -35,12 +35,14 @@ use Illuminate\Support\Str;
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?int $navigationSort=1;
 
-    protected static ?string $recordTitleAttribute="name";
+    protected static ?int $navigationSort = 1;
 
-    protected static bool $isGloballySearchable=true;
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static bool $isGloballySearchable = true;
 
     public static function form(Form $form): Form
     {
@@ -51,16 +53,17 @@ class ProductResource extends Resource
                     ->hiddenOn(CreateProduct::class),
 
                 TextInput::make('url')
-                    ->required(fn($operation)=> $operation=="create")
-                    ->autofocus(fn($operation)=> $operation=="create")
+                    ->required(fn ($operation) => $operation == 'create')
+                    ->autofocus(fn ($operation) => $operation == 'create')
                     ->url()
                     ->label('URL of product')
-                    ->live(onBlur: true )
-                    ->afterStateUpdated(function ($state){
-                        if($state){
-                            $url=new URLHelper($state);
-                            if ($url->store )
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state) {
+                        if ($state) {
+                            $url = new URLHelper($state);
+                            if ($url->store) {
                                 StoreHelper::is_unique($url);
+                            }
                         }
                     }),
 
@@ -76,76 +79,75 @@ class ProductResource extends Resource
 
                 TextInput::make('notify_percentage')
                     ->nullable()
-                    ->hintIcon("heroicon-o-information-circle", "Get notified when price drops below specified percentage")
+                    ->hintIcon('heroicon-o-information-circle', 'Get notified when price drops below specified percentage')
                     ->suffix('%')
                     ->numeric(),
 
                 Select::make('categories')
-                    ->relationship('categories','name')
+                    ->relationship('categories', 'name')
                     ->createOptionForm([Forms\Components\TextInput::make('name')->required()])
                     ->multiple()
                     ->nullable()
                     ->preload(),
 
                 DatePicker::make('snoozed_until')
-                    ->label("Snooze Notification Until"),
+                    ->label('Snooze Notification Until'),
 
-
-                Section::make("Cross Stores Notification Settings")
+                Section::make('Cross Stores Notification Settings')
                     ->columns(4)
                     ->schema([
                         Forms\Components\Toggle::make('only_official')
-                            ->label("Official Sellers Only")
+                            ->label('Official Sellers Only')
                             ->inline(false),
 
                         Forms\Components\Toggle::make('favourite')
-                            ->label("Add To Favourite")
+                            ->label('Add To Favourite')
                             ->inline(false),
 
                         Forms\Components\Toggle::make('stock')
-                            ->label("Alert When Stock Available")
+                            ->label('Alert When Stock Available')
                             ->inline(false),
 
                         Forms\Components\TextInput::make('lowest_within')
-                            ->label("Alert if Product lowest within")
+                            ->label('Alert if Product lowest within')
                             ->nullable()
                             ->suffix('days')
                             ->maxValue(65535),
 
                         TextInput::make('max_notifications')
-                            ->label("Max Notification Sent Daily")
+                            ->label('Max Notification Sent Daily')
                             ->integer()
                             ->minValue(0)
                             ->numeric()
-                            ->placeholder("unlimited")
-                            ->hintIcon("heroicon-o-information-circle",
+                            ->placeholder('unlimited')
+                            ->hintIcon('heroicon-o-information-circle',
                                 "this is for products that fluctuate in price, it won't send any more notification UNLESS the price is less than earlier"),
                     ])
                     ->collapsible(),
 
-
-                Section::make("Variants")
-                    ->hiddenOn(["view", "edit"])
+                Section::make('Variants')
+                    ->hiddenOn(['view', 'edit'])
                     ->columns(4)
                     ->schema([
 
                         Forms\Components\Toggle::make('variations')
-                            ->label("choose other variations to include")
+                            ->label('choose other variations to include')
                             ->inline(false)
                             ->reactive()
-                            ->afterStateUpdated(function ($component, $get , $state){
-                                if (!$get('url')){
+                            ->afterStateUpdated(function ($component, $get, $state) {
+                                if (! $get('url')) {
                                     Notification::make()
                                         ->danger()
-                                        ->title("URL Field is empty")
+                                        ->title('URL Field is empty')
                                         ->send();
-                                    return ;
+
+                                    return;
                                 }
 
-                                if ($state  ){
-                                    $url=new URLHelper($get('url'));
-                                    $final_class_name="App\Helpers\StoresAvailable\\" . Str::ucfirst( explode(".",$url->store->domain)[0]);
-                                    $variations = call_user_func($final_class_name . '::get_variations' , $url->final_url  );
+                                if ($state) {
+                                    $url = new URLHelper($get('url'));
+                                    $final_class_name = "App\Helpers\StoresAvailable\\".Str::ucfirst(explode('.', $url->store->domain)[0]);
+                                    $variations = call_user_func($final_class_name.'::get_variations', $url->final_url);
                                     $component->getContainer()
                                         ->getComponent('variation_options')
                                         ->options($variations)
@@ -160,8 +162,8 @@ class ProductResource extends Resource
                             ->key('variation_options')
                             ->preload()
                             ->disabled()
-                            ->placeholder("choose variation")
-                 ]),
+                            ->placeholder('choose variation'),
+                    ]),
             ]);
 
     }
@@ -169,12 +171,13 @@ class ProductResource extends Resource
     public static function table(Table $table): Table
     {
 
-        $stores=StoreHelper::get_stores_with_active_products();
-        $currencies=CurrencyHelper::get_currencies();
+        $stores = StoreHelper::get_stores_with_active_products();
+        $currencies = CurrencyHelper::get_currencies();
+
         return $table
-            ->modifyQueryUsing(function ($query){
+            ->modifyQueryUsing(function ($query) {
                 $query->with([
-                    "product_stores:id,product_id,store_id,price,notify_price,updated_at,highest_price,lowest_price",
+                    'product_stores:id,product_id,store_id,price,notify_price,updated_at,highest_price,lowest_price',
                 ]);
             })
             ->columns([
@@ -191,8 +194,8 @@ class ProductResource extends Resource
                     ->color(fn ($state) => StatusEnum::get_badge($state)),
 
                 TextColumn::make('product_stores.store_id')
-                    ->formatStateUsing(function ($state) use($stores){
-                        return $stores[$state]["name"];
+                    ->formatStateUsing(function ($state) use ($stores) {
+                        return $stores[$state]['name'];
                     })
                     ->listWithLineBreaks(),
 
@@ -206,26 +209,25 @@ class ProductResource extends Resource
                         return ProductHelper::prepare_multiple_notify_prices_in_table($record, $currencies, $stores);
                     })->label('Notify at'),
 
-
                 TextColumn::make('product_stores.highest_price')
-                    ->label("Highest Price")
+                    ->label('Highest Price')
                     ->listWithLineBreaks()
                     ->color('danger'),
 
                 TextColumn::make('product_stores.lowest_price')
-                    ->label("Lowest Price")
+                    ->label('Lowest Price')
                     ->listWithLineBreaks()
                     ->color('success'),
 
                 ToggleIconColumn::make('favourite')
-                    ->onIcon("heroicon-s-star")
-                    ->offIcon("heroicon-o-star"),
+                    ->onIcon('heroicon-s-star')
+                    ->offIcon('heroicon-o-star'),
 
                 TextColumn::make('product_stores.updated_at')
                     ->listWithLineBreaks()
                     ->label('Last Update'),
             ])
-            ->defaultSort('favourite' , 'desc')
+            ->defaultSort('favourite', 'desc')
             ->filters([
 
                 SelectFilter::make('status')
@@ -233,41 +235,43 @@ class ProductResource extends Resource
                     ->preload()
                     ->multiple(),
 
-                Filter::make('notify_price')->query(function ($query){
+                Filter::make('notify_price')->query(function ($query) {
                     $query->whereHas(
-                        'product_stores',function($query){
+                        'product_stores', function ($query) {
                             $query->whereRaw('product_store.price  <= product_store.notify_price');
                         }
-                    );})
+                    );
+                })
                     ->label('Price Met Target')
                     ->toggle(),
 
                 Filter::make('favourite')->query(function (Builder $query) {
                     $query->where('favourite', 1);
-                    })
+                })
                     ->label('Favourite product')
                     ->toggle(),
 
                 Filter::make('highest_price')->query(function (Builder $query) {
-                        return $query->whereHas('product_stores', function ($query){
-                            $query->whereColumn('price' , '<=' , 'highest_price');
-                        });
-                    })
+                    return $query->whereHas('product_stores', function ($query) {
+                        $query->whereColumn('price', '<=', 'highest_price');
+                    });
+                })
                     ->label('Lower Than Highest Price')
                     ->toggle(),
 
                 Filter::make('lowest_within')
                     ->form([
-                        TextInput::make('lowest_within_x')
-                            ->label('Price is lowest in X Days'),
+                    TextInput::make('lowest_within_x')
+                        ->label('Price is lowest in X Days'),
 
-                    ])
+                ])
                     ->query(function (Builder $query, $data) {
 
-                        if (!$data["lowest_within_x"])
-                            return ;
+                        if (! $data['lowest_within_x']) {
+                            return;
+                        }
 
-                        $products_with_lowest_price_within_x=\DB::select("
+                        $products_with_lowest_price_within_x = \DB::select("
                             SELECT p.product_id
                             FROM product_store p
                             JOIN (
@@ -283,19 +287,16 @@ class ProductResource extends Resource
                             "
                         );
 
+                        $product_ids = Arr::pluck($products_with_lowest_price_within_x, 'product_id');
 
-                        $product_ids= Arr::pluck($products_with_lowest_price_within_x , 'product_id');
-
-                      $query->wherein('id', $product_ids);
-                })    ->indicateUsing(function (array $data): ?string {
+                        $query->wherein('id', $product_ids);
+                    })->indicateUsing(function (array $data): ?string {
                         if (! $data['lowest_within_x']) {
                             return null;
                         }
 
-                        return "Lowest in {$data['lowest_within_x']} Days" ;
-                    })
-
-
+                        return "Lowest in {$data['lowest_within_x']} Days";
+                    }),
 
             ])
             ->actions([
@@ -309,12 +310,10 @@ class ProductResource extends Resource
             ]);
     }
 
-
-
     public static function getRelations(): array
     {
         return [
-            RelationManagers\StoresRelationManager::class
+            RelationManagers\StoresRelationManager::class,
         ];
     }
 
@@ -324,7 +323,7 @@ class ProductResource extends Resource
             'index' => ListProducts::route('/'),
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
-            'view' =>ViewProduct::route('/{record}'),
+            'view' => ViewProduct::route('/{record}'),
         ];
     }
 }

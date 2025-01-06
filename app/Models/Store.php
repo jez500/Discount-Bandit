@@ -10,39 +10,36 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-
 #[ObservedBy(StoreObserver::class)]
 class Store extends Model
 {
-    use HasFactory ;
+    use HasFactory;
 
-    protected $fillable=[
-        "deleted_at",
-        "name",
-        "domain",
-        "image",
-        "slug",
-        "status",
-        "tabs",
-        "currency_id",
+    protected $fillable = [
+        'deleted_at',
+        'name',
+        'domain',
+        'image',
+        'slug',
+        'status',
+        'tabs',
+        'currency_id',
     ];
-
 
     protected function casts(): array
     {
         return [
-            'status'=>StatusEnum::class,
-            'price'=>Money::class,
-            'used_price'=>Money::class,
-            'lowest_price'=>Money::class,
-            'highest_price'=>Money::class,
-            'notify_price'=>Money::class,
-            'notify_percentage'=>Money::class,
-            'shipping_price'=>Money::class,
-            'pivot.updated_at'=>'datetime',
+            'status' => StatusEnum::class,
+            'price' => Money::class,
+            'used_price' => Money::class,
+            'lowest_price' => Money::class,
+            'highest_price' => Money::class,
+            'notify_price' => Money::class,
+            'notify_percentage' => Money::class,
+            'shipping_price' => Money::class,
+            'pivot.updated_at' => 'datetime',
         ];
     }
-
 
     public function currency(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -52,8 +49,8 @@ class Store extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class)->withTimestamps()->withPivot([
-            "id",
-            //data
+            'id',
+            // data
             'price',
             'notify_price',
             'notify_percentage',
@@ -62,9 +59,9 @@ class Store extends Model
             'seller',
             'shipping_price',
             'updated_at',
-            //extra settings
+            // extra settings
             'add_shipping',
-            //ebay
+            // ebay
             'remove_if_sold',
             'ebay_id',
         ]);

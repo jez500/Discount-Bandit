@@ -32,143 +32,135 @@ class MigrateOldDatabaseCommand extends Command
     public function handle()
     {
 
-        echo "Disabling 2FA from old database";
+        echo 'Disabling 2FA from old database';
 
         DB::table('breezy_sessions')->update([
-            "two_factor_secret"=>null
+            'two_factor_secret' => null,
         ]);
 
         echo "Migrating  old database to new one\n";
 
-        if (env('DB_CONNECTION') =='mysql'){
+        if (env('DB_CONNECTION') == 'mysql') {
 
-            //amazon products
-            $products=Product::whereNotNull('asin')->get();
-            //update amazon products
-            foreach ($products as $product){
-                ProductStore::where('product_id' , $product->id)
-                    ->whereIn('store_id' , Store::where('name' , 'Like' , 'Amazon%')->pluck('id')->toArray())
+            // amazon products
+            $products = Product::whereNotNull('asin')->get();
+            // update amazon products
+            foreach ($products as $product) {
+                ProductStore::where('product_id', $product->id)
+                    ->whereIn('store_id', Store::where('name', 'Like', 'Amazon%')->pluck('id')->toArray())
                     ->update([
-                        'key'=>$product->asin
+                        'key' => $product->asin,
                     ]);
-                echo  " Migrating Product \033[0;32m $product->name \033[0m \n";
+                echo " Migrating Product \033[0;32m $product->name \033[0m \n";
             }
 
-            //Argos products
-            $products=Product::whereNotNull('argos_id')->get();
-            //update amazon products
-            foreach ($products as $product){
-                ProductStore::where('product_id' , $product->id)
-                    ->whereIn('store_id' , Store::where('name' , 'Like' , 'Argos%')->pluck('id')->toArray())
+            // Argos products
+            $products = Product::whereNotNull('argos_id')->get();
+            // update amazon products
+            foreach ($products as $product) {
+                ProductStore::where('product_id', $product->id)
+                    ->whereIn('store_id', Store::where('name', 'Like', 'Argos%')->pluck('id')->toArray())
                     ->update([
-                        'key'=>$product->argos_id
+                        'key' => $product->argos_id,
                     ]);
-                echo  " Migrating Product \033[0;32m $product->name \033[0m \n";
+                echo " Migrating Product \033[0;32m $product->name \033[0m \n";
             }
-            //Walmart products
-            $products=Product::whereNotNull('argos_id')->get();
-            //update amazon products
-            foreach ($products as $product){
-                ProductStore::where('product_id' , $product->id)
-                    ->whereIn('store_id' , Store::where('name' , 'Like' , 'Walmart%')->pluck('id')->toArray())
+            // Walmart products
+            $products = Product::whereNotNull('argos_id')->get();
+            // update amazon products
+            foreach ($products as $product) {
+                ProductStore::where('product_id', $product->id)
+                    ->whereIn('store_id', Store::where('name', 'Like', 'Walmart%')->pluck('id')->toArray())
                     ->update([
-                        'key'=>$product->walmart_ip
+                        'key' => $product->walmart_ip,
                     ]);
-                echo  " Migrating Product \033[0;32m $product->name \033[0m \n";
+                echo " Migrating Product \033[0;32m $product->name \033[0m \n";
             }
 
+        } elseif (env('DB_CONNECTION') == 'sqlite') {
+            foreach (Product::on('mysql')->cursor() as $record) {
 
-
-
-
-        }else if (env('DB_CONNECTION') =='sqlite'){
-            foreach (Product::on('mysql')->cursor() as $record){
-
-                //insert the new product.
+                // insert the new product.
                 try {
-                    $new_product= Product::on('sqlite')
+                    $new_product = Product::on('sqlite')
                         ->create([
-                        "name" => $record->name,
-                        "image" => $record->image,
-                        "status" => $record->status,
-                        "favourite" => $record->favourite,
-                        "stock" => $record->stock,
-                        "snoozed_until" => $record->snoozed_until,
-                        "max_notifications" => $record->max_notifications,
-                        "lowest_within" => $record->lowest_within,
-                        "only_official" => $record->only_official,
-                    ]);
+                            'name' => $record->name,
+                            'image' => $record->image,
+                            'status' => $record->status,
+                            'favourite' => $record->favourite,
+                            'stock' => $record->stock,
+                            'snoozed_until' => $record->snoozed_until,
+                            'max_notifications' => $record->max_notifications,
+                            'lowest_within' => $record->lowest_within,
+                            'only_official' => $record->only_official,
+                        ]);
 
-                }catch (\Exception $exception){
+                } catch (\Exception $exception) {
                     dd($exception->getMessage());
                 }
 
-                //migrate old history.
+                // migrate old history.
 
-                $old_histories=PriceHistory::on('mysql')
-                    ->where('product_id',$record->id)
+                $old_histories = PriceHistory::on('mysql')
+                    ->where('product_id', $record->id)
                     ->get();
 
-                foreach ($old_histories as $old_history)
+                foreach ($old_histories as $old_history) {
                     PriceHistory::create([
-                        "product_id" => $new_product->id,
-                        "date"=>$old_history->date,
-                        "price"=>$old_history->price,
-                        "store_id"=>$old_history->store_id,
-                        "used_price"=>0
+                        'product_id' => $new_product->id,
+                        'date' => $old_history->date,
+                        'price' => $old_history->price,
+                        'store_id' => $old_history->store_id,
+                        'used_price' => 0,
                     ]);
+                }
 
-                //migrate product store.
+                // migrate product store.
 
-                $product_stores=ProductStore::on('mysql')
-                    ->where('product_id',$record->id)
+                $product_stores = ProductStore::on('mysql')
+                    ->where('product_id', $record->id)
                     ->get();
 
-                foreach ($product_stores as $product_store){
+                foreach ($product_stores as $product_store) {
 
-                    $current_store=Store::find($product_store->store_id);
+                    $current_store = Store::find($product_store->store_id);
 
-                    $product_key= match (true){
-                        Str::contains($current_store->name, "amazon", true) => $record->asin,
-                        Str::contains($current_store->name, "ebay", true) => $product_store->ebay_id,
-                        Str::contains($current_store->name, "walmart", true) => $record->walmart_ip,
-                        Str::contains($current_store->name, "argos", true) => $record->argos_id,
-                        default=>null
+                    $product_key = match (true) {
+                        Str::contains($current_store->name, 'amazon', true) => $record->asin,
+                        Str::contains($current_store->name, 'ebay', true) => $product_store->ebay_id,
+                        Str::contains($current_store->name, 'walmart', true) => $record->walmart_ip,
+                        Str::contains($current_store->name, 'argos', true) => $record->argos_id,
+                        default => null
                     };
 
-                    try{
+                    try {
                         ProductStore::create([
-                            "product_id" => $new_product->id,
-                            "store_id" => $product_store->store_id,
-                            "price" =>$product_store->price,
-                            "used_price"=>0,
-                            "notify_price"=>$product_store->notify_price,
-                            "rate"=>$product_store->rate,
-                            "number_of_rates"=>$product_store->number_of_rates,
-                            "seller"=>$product_store->seller,
-                            "offers"=>$product_store->offers,
-                            "shipping_price"=>$product_store->shipping_price,
-                            "condition"=>$product_store->condition,
-                            "notifications_sent"=>$product_store->notifications_sent,
-                            "lowest_30"=>$product_store->lowest_30,
-                            "add_shipping"=>$product_store->add_shipping,
-                            "in_stock"=>$product_store->in_stock,
-                            "key"=>$product_key,
+                            'product_id' => $new_product->id,
+                            'store_id' => $product_store->store_id,
+                            'price' => $product_store->price,
+                            'used_price' => 0,
+                            'notify_price' => $product_store->notify_price,
+                            'rate' => $product_store->rate,
+                            'number_of_rates' => $product_store->number_of_rates,
+                            'seller' => $product_store->seller,
+                            'offers' => $product_store->offers,
+                            'shipping_price' => $product_store->shipping_price,
+                            'condition' => $product_store->condition,
+                            'notifications_sent' => $product_store->notifications_sent,
+                            'lowest_30' => $product_store->lowest_30,
+                            'add_shipping' => $product_store->add_shipping,
+                            'in_stock' => $product_store->in_stock,
+                            'key' => $product_key,
                         ]);
-                    }catch (\Exception $e){
+                    } catch (\Exception $e) {
                         dd($product_store);
                     }
 
                 }
 
-
-
-                echo  " Migrating Product \033[0;32m $record->name \033[0m \n";
+                echo " Migrating Product \033[0;32m $record->name \033[0m \n";
 
             }
-
-
-
 
         }
     }

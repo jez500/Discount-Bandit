@@ -11,20 +11,20 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
-    protected static ?int $navigationSort=10;
+
+    protected static ?int $navigationSort = 10;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make("name")
+                Forms\Components\TextInput::make('name')
                     ->required(),
             ]);
     }
@@ -33,7 +33,7 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make("name")->searchable()
+                TextColumn::make('name')->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -48,7 +48,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ProductsRelationManager::make()
+            RelationManagers\ProductsRelationManager::make(),
         ];
     }
 

@@ -5,7 +5,6 @@ namespace App\Filament\Resources\StoreResource\Pages;
 use App\Filament\Resources\StoreResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Pagination\CursorPaginator;
 
 class ListStores extends ListRecords
 {
@@ -17,6 +16,4 @@ class ListStores extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
-
 }
